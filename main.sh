@@ -15,6 +15,7 @@ function print_menu {
       ((INDEX++))
     fi
   done
+  echo "$INDEX) Exit"   ## Add Exit option
   echo "Please enter the number of your choice:"
 }
 
@@ -27,6 +28,8 @@ while :; do
     echo "Opening tool: $TOOL"
     source ./$TOOL/main.sh
     print_menu
+  elif [ $INPUT -eq $INDEX ]; then
+    break   ## Exit when 'Exit' option is selected
   else
     echo "Invalid input. Please enter a valid number."
   fi

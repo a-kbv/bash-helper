@@ -21,6 +21,7 @@ function print_submenu {
       fi
     fi
   done
+  echo "$INDEX) Return"   ## Add Return option
   echo "Please enter the number of your choice:"
 }
 
@@ -36,6 +37,8 @@ do
     echo "Press any key to continue..."
     read -n1 -s
     print_submenu
+  elif [ $INPUT -eq $INDEX ]; then
+    break  ## Return to previous menu when 'Return' option is selected
   else
     echo "Invalid input. Please enter a valid number."
   fi
