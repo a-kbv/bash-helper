@@ -9,7 +9,7 @@ function print_menu {
   echo "Available Tools:"
   for dir in */; do
     dir=${dir%*/}
-    if [[ "$dir" != "excluded_dir1" && "$dir" != "excluded_dir2" ]]; then
+    if [[ "$dir" != "Example" && "$dir" != "excluded_dir2" ]]; then
       TOOLS[INDEX]=$dir
       echo "$INDEX) $dir"
       ((INDEX++))
