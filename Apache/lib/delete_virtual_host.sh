@@ -1,19 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "Delete a virtual host."
-    list_vhosts
+vhosts=$(ls /etc/apache2/sites-available/)
+vhosts_array=($vhosts)
 
-    read -e -p "Please enter the server name to delete: " SERVERNAME
-    if [ -z "$SERVERNAME" ]; then
-        echo "Server name cannot be empty. Please try again with a valid server name."
-        return
-    fi
+echo "Select vhost to delete:"
+select vhost in "${vhosts_array[@]}"; do
+  [[ -n $vhost ]] && break
+done
 
-    # Remove virtual host file
-    sudo rm "/etc/apache2/sites-available/$SERVERNAME.conf"
-    sudo rm "/etc/apache2/sites-enabled/$SERVERNAME.conf"
+sudo a2dissite ${vhost}
+sudo rm -f /etc/apache2/sites-available/${vhost}
+sudo systemctl restart apache2
 
-    # Restart Apache
-    sudo systemctl restart apache2
-
-    echo "Virtual host deleted successfully."
+echo "Virtual host ${vhost} has been deleted."

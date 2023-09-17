@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# This script is the entry point for the tool and is called by the root main.sh script
+# It will display a menu of available tools and allow the user to select one
+
 declare -a TOOLS=()
 
 # Get the directory path of the executing script

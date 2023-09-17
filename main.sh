@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#This script is the main entry point for the tool
+#It will display a menu of available tools and allow the user to select one
+#The selected tool's main.sh will then be executed
+
 declare -a TOOLS=()
 
 ## function to print tool options

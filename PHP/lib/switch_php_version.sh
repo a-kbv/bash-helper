@@ -1,64 +1,48 @@
 #!/bin/sh
 
-echo "You opted to switch PHP version."
+#This script will switch PHP version
 
-    # php versions array
-    declare -a phpVersioArr=("php8.0" "php8.1" "php8.2")
+echo "You have opted to switch PHP version"
 
-    # get length of the array
-    arraylength=${#phpVersioArr[@]}
+php_versions=$(for x in /etc/php/*/; do basename "$x"; done)
+php_versions_array=($php_versions)
 
-    # taking current php version
-    php_version_command=`php -v`;
-    php_version_current=${php_version_command:3:4}
+array_length=${#php_versions_array[@]}
 
-    # trim the string
-    php_version_current=`echo $php_version_current | sed 's/ *$//g'`
+current_php_version_command=`php -v`
+current_php_version=${current_php_version_command:4:3}
 
-    echo "Select PHP Version from the list:"
-    echo "========================================="
+echo "Select PHP Version from the list"
+echo "========================================="
 
-    # use for loop to read all values and indexes
-    for (( i=0; i<${arraylength}; i++ ));
-    do
-      echo "$i - ${phpVersioArr[$i]}"
-    done
-    echo "========================================="
+for (( i=0; i<${array_length}; i++ ))
+do
+  echo "$i - php${php_versions_array[$i]}"
+done
 
-    # waiting for user to select correct version of php to switch to
-    pattern="^[0-9]{1}$"
-    selectedPHPVersion="";
-    while [[ (! $selectedPHPVersion =~ $pattern) || (! -v "phpVersioArr[selectedPHPVersion]") ]]
-    do
-        echo Please enter valid input
-        read selectedPHPVersion
-    done
+echo "========================================="
 
-    new_php_version="${phpVersioArr[$selectedPHPVersion]:3:4}"
+pattern="^[0-9]{1}$"
+selected_index="";
 
-    echo "Switching to PHP$new_php_version. . ."
+while [[ (! $selected_index =~ $pattern) || (! -v "php_versions_array[selected_index]") ]]
+do
+    echo "Please enter a valid input"
+    read selected_index
+done
 
-    sudo a2disconf "php${php_version_current}-fpm";
-    sudo a2enconf "${phpVersioArr[$selectedPHPVersion]}-fpm";
-    sudo systemctl restart apache2;
+new_php_version=${php_versions_array[$selected_index]}
 
-    sudo update-alternatives --set php /usr/bin/"${phpVersioArr[$selectedPHPVersion]}";
-    sudo update-alternatives --set phar /usr/bin/phar"$new_php_version";
-    sudo update-alternatives --set phar.phar /usr/bin/phar.phar"$new_php_version";
-    sudo update-alternatives --set phpize /usr/bin/phpize"$new_php_version";
-    sudo update-alternatives --set php-config /usr/bin/php-config"$new_php_version";
+sudo a2dismod php$current_php_version;
+sudo a2enmod php$new_php_version;
+sudo systemctl restart apache2;
 
-    echo ""
+sudo update-alternatives --set php /usr/bin/php$new_php_version;
+sudo update-alternatives --set phar /usr/bin/phar$new_php_version;
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar$new_php_version;
+sudo update-alternatives --set phpize /usr/bin/phpize$new_php_version;
+sudo update-alternatives --set php-config /usr/bin/php-config$new_php_version;
 
-    echo "---------------------------------------------------------"
-    echo "Switched to PHP$new_php_version successfully."
-    echo "---------------------------------------------------------"
+echo "PHP has been switched to PHP$new_php_version"
 
-    echo ""
-    echo "Current PHP version:"
-    php -v
-
-    echo "---------------------------------------------------------"
-
-    echo "Done!"
-    echo "---------------------------------------------------------"
+php -v

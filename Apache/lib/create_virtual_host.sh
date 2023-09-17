@@ -1,54 +1,60 @@
-#!/bin/sh
-echo "Create a new virtual host."
+#!/bin/bash
 
-    read -e -p "Please enter the directory: " DIRECTORY
-    if [ ! -d "$DIRECTORY" ]; then
-        echo "Directory does not exist. Please try again with a valid directory."
-        return
-    fi
+php_versions=$(for x in /etc/php/*/; do basename "$x"; done)
+php_versions_array=($php_versions)
 
-    read -e -p "Please enter the server name: " SERVERNAME
-    if [ -z "$SERVERNAME" ]; then
-        echo "Server name cannot be empty. Please try again with a valid server name."
-        return
-    fi
+echo "Enter website name:"
+read websiteName
 
-    # Create virtual host file
-    sudo tee "/etc/apache2/sites-available/$SERVERNAME.conf" > /dev/null << EOT
+echo "Enter document root path: (NOTICE: start typing and then use tab for autocomplete)"
+read -e documentRoot
+
+echo "Enter SSL certificate file path or leave it empty to use default  (/etc/ssl/certs/apache-selfsigned.crt): (NOTICE: start typing and then use tab for autocomplete)"
+read -e sslCrt
+sslCrt=${sslCrt:-"/etc/ssl/certs/apache-selfsigned.crt"}
+
+echo "Enter SSL key file path or leave it empty to use default (/etc/ssl/private/apache-selfsigned.key): (NOTICE: start typing and then use tab for autocomplete)"
+read -e sslKey
+sslKey=${sslKey:-"/etc/ssl/private/apache-selfsigned.key"}
+
+echo "Select PHP version:"
+select phpVersion in "${php_versions_array[@]}"; do
+  [[ -n $phpVersion ]] && break
+done
+
+configFile="/etc/apache2/sites-available/${websiteName}.conf"
+
+sudo bash -c "cat > ${configFile}" << EOL
 <VirtualHost *:80>
-    DocumentRoot "$DIRECTORY"
-    ServerName $SERVERNAME
-    <Directory "$DIRECTORY">
+    DocumentRoot "$documentRoot"
+    ServerName $websiteName
+    <Directory "$documentRoot">
         Options -Indexes +FollowSymLinks +MultiViews
         Require all granted
         AllowOverride All
     </Directory>
-    <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php8.1-fpm.sock|fcgi://localhost"
+    <FilesMatch ".+\.ph(ar|p|tml)\$">
+        SetHandler "proxy:unix:/run/php/${phpVersion}-fpm.sock|fcgi://localhost"
     </FilesMatch>
 </VirtualHost>
+
 <VirtualHost *:443>
-    DocumentRoot "$DIRECTORY"
-    ServerName $SERVERNAME
+    DocumentRoot "$documentRoot"
+    ServerName $websiteName
     SSLEngine on
-    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
-    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+    SSLCertificateFile $sslCrt
+    SSLCertificateKeyFile $sslKey
 
-    <Directory "$DIRECTORY">
+    <Directory "$documentRoot">
         Options -Indexes +FollowSymLinks +MultiViews
         Require all granted
         AllowOverride All
     </Directory>
-    <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php8.1-fpm.sock|fcgi://localhost"
+    <FilesMatch ".+\.ph(ar|p|tml)\$">
+        SetHandler "proxy:unix:/run/php/${phpVersion}-fpm.sock|fcgi://localhost"
     </FilesMatch>
 </VirtualHost>
-EOT
-
-    # Create symlink in sites-enabled
-    sudo ln -s "/etc/apache2/sites-available/$SERVERNAME.conf" "/etc/apache2/sites-enabled/$SERVERNAME.conf"
-
-    # Restart Apache
-    sudo systemctl restart apache2
-
-    echo "Virtual host created successfully."
+EOL
+sudo a2ensite ${websiteName}.conf
+sudo systemctl restart apache2
+echo "All done, you can now access your site at http://${websiteName} and https://${websiteName}"
