@@ -15,7 +15,7 @@ current_php_version=${current_php_version_command:4:3}
 echo "Select PHP Version from the list"
 echo "========================================="
 
-for (( i=0; i<${array_length}; i++ ))
+for (( i=1; i<${array_length}; i++ ))
 do
   echo "$i - php${php_versions_array[$i]}"
 done
