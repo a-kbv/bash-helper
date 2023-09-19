@@ -1,5 +1,7 @@
 # Shell Script Menu Project
 
+![helper](/helper.png)
+
 The Shell Script Menu Project is a command-line interface (CLI) structured in a series of directories and subdirectories, each of which contains a suite of shell script tools designed to perform a variety of different tasks. 
 
 The main script, `main.sh`, serves as a gateway to the rest of the scripts in the project. It presents the user with a list of all available directories or tools, excluding specified directories. The user can then input the number corresponding to the tool they wish to use, which will run the corresponding script.
@@ -67,6 +69,7 @@ Open a terminal and type:
 cd
 nano ~/.bashrc
 ```
+
 This will open your bashrc file in nano text editor.
 
 **Step 2: Add an alias**
@@ -93,7 +96,6 @@ Your script is now available as a command you can run from any location in your 
 **Note**: You should ensure that `main.sh` has the appropriate execute permissions (`chmod +x main.sh`) for the alias to run properly. 
 
 ***
-
 
 ### Note
 
