@@ -8,12 +8,15 @@ Each tool directory contains another `main.sh` script, which further categorizes
 
 ## Usage
 
-1. Navigate to the root directory containing main.sh script.
-2. Execute the main script using the command `./main.sh`.
-3. You will be presented with a menu of available tools. Enter the number of your preferred tool.
-4. You will then get another menu for subtools within the selected tool. Again, enter the number of your selection.
-5. The selected tool runs. Press any key to return to the tools menu.
-6. Repeat above steps to run other tools. Enter the corresponding number to "Exit" or "Return" when you are finished.
+Follow the steps below to use the tool effectively:
+
+1. Navigate to the root directory containing the `main.sh` script.
+2. Execute the `main.sh` script using the command `./main.sh`.
+3. You will be then presented with a menu of available tools. Enter the number associated with your preferred tool.
+4. Another menu will appear for sub-tools within the selected tool. Please enter the number of your desired sub-tool.
+5. Once chosen, the selected tool will execute. Whenever you want to return to the tools menu, press any key.
+6. For convenience, you can add an alias for the script. Go to the menu labelled "Common" and select the "Add Helper Alias" option. After a terminal restart, you can use the command `helper` to call the script.
+7. To run other tools, just follow the same steps. Whenever you are done, you can find "Exit" or "Return" options in all tools. Just enter the number corresponding to these options.
 
 ## Customization
 
