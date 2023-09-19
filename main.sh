@@ -1,25 +1,37 @@
 #!/bin/bash
 
-#This script is the main entry point for the tool
-#It will display a menu of available tools and allow the user to select one
-#The selected tool's main.sh will then be executed
 cd "$(dirname "$BASH_SOURCE")"
 declare -a TOOLS=()
+
+# ANSI/VT100 Terminal Control Escape Sequences
+# Set color codes
+BOLD="$(tput bold)" # bold style
+RED="$(tput setaf 1)" # red color
+GREEN="$(tput setaf 2)" # green color
+YELLOW="$(tput setaf 3)" # yellow color
+BLUE="$(tput setaf 4)" # blue color
+WHITE="$(tput setaf 7)" # white color
+RESET="$(tput sgr0)" # reset everything 
 
 ## function to print tool options
 function print_menu {
   clear
   INDEX=1
-  echo "Available Tools:"
+  echo "${YELLOW}"
+  echo "╔═════════════════════════════════╗"
+  echo "║          Available Tools        ║"
+  echo "╚═════════════════════════════════╝"
+  echo "${RESET}"
+
   for dir in */; do
     dir=${dir%*/}
     if [[ "$dir" != "Example" && "$dir" != "excluded_dir2" ]]; then
       TOOLS[INDEX]=$dir
-      echo "$INDEX) $dir"
+      echo "${GREEN}${BOLD}$INDEX) $dir${RESET}"
       ((INDEX++))
     fi
   done
-  echo "$INDEX) Exit"   ## Add Exit option
+  echo "${BLUE}${BOLD}$INDEX) Exit${RESET}"   ## Add Exit option
   echo "Please enter the number of your choice:"
 }
 
@@ -29,12 +41,12 @@ while :; do
   read INPUT
   if [[ "$INPUT" =~ ^[0-9]+$ && $INPUT -ge 1 && $INPUT -lt $INDEX ]]; then
     TOOL=${TOOLS[$INPUT]}
-    echo "Opening tool: $TOOL"
+    echo "${WHITE}Opening tool: $TOOL${RESET}"
     source ./$TOOL/main.sh
     print_menu
   elif [ $INPUT -eq $INDEX ]; then
     break   ## Exit when 'Exit' option is selected
   else
-    echo "Invalid input. Please enter a valid number."
+    echo "${RED}Invalid input. Please enter a valid number.${RESET}"
   fi
 done
