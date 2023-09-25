@@ -28,8 +28,10 @@ function print_submenu {
       filename=$(basename -- "$file")
       filename="${filename%.*}"
       if [[ "$filename" != "exclude_tool1" && "$filename" != "exclude_tool2" ]]; then
-        TOOLS[INDEX]=$filename
-        echo "${GREEN}${BOLD}$INDEX) $filename${RESET}"
+        # Replace underscores with spaces and capitalize each word
+        formatted_filename="$(echo ${filename//_/ } | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')"
+        TOOLS[INDEX]=$formatted_filename
+        echo "${GREEN}${BOLD}$INDEX) $formatted_filename${RESET}"
         ((INDEX++))
       fi
     fi
@@ -45,7 +47,9 @@ while :; do
   if [[ "$INPUT" =~ ^[0-9]+$ && $INPUT -ge 1 && $INPUT -lt $INDEX ]]; then
     TOOL=${TOOLS[$INPUT]}
     echo "${WHITE}Running tool: $TOOL${RESET}"
-    source "$SCRIPT_DIR"/lib/$TOOL.sh
+    # Change back to underscores and lowercase for source file
+    filename_tool="$(echo ${TOOL// /_} | awk '{print tolower($0)}')"
+    source "$SCRIPT_DIR"/lib/$filename_tool.sh
     echo "Press any key to continue..."
     read -n1 -s
     print_submenu

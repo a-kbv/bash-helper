@@ -17,7 +17,8 @@ echo "========================================="
 
 for (( i=0; i<${array_length}; i++ ))
 do
-  echo "$i - php${php_versions_array[$i]}"
+  index=$((i+1))
+  echo "$index - php${php_versions_array[$i]}"
 done
 
 echo "========================================="
@@ -25,13 +26,13 @@ echo "========================================="
 pattern="^[0-9]{1}$"
 selected_index="";
 
-while [[ (! $selected_index =~ $pattern) || (! -v "php_versions_array[selected_index]") ]]
+while [[ (! $selected_index =~ $pattern) || (! -v "php_versions_array[selected_index-1]") ]]
 do
     echo "Please enter a valid input"
     read selected_index
 done
 
-new_php_version=${php_versions_array[$selected_index]}
+new_php_version=${php_versions_array[$selected_index-1]}
 
 sudo a2dismod php$current_php_version;
 sudo a2enmod php$new_php_version;
