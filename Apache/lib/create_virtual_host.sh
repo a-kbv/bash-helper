@@ -34,7 +34,7 @@ sudo bash -c "cat > ${configFile}" << EOL
         AllowOverride All
     </Directory>
     <FilesMatch ".+\.ph(ar|p|tml)\$">
-        SetHandler "proxy:unix:/run/php/${phpVersion}-fpm.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/run/php/php${phpVersion}-fpm.sock|fcgi://localhost"
     </FilesMatch>
 </VirtualHost>
 
@@ -51,7 +51,7 @@ sudo bash -c "cat > ${configFile}" << EOL
         AllowOverride All
     </Directory>
     <FilesMatch ".+\.ph(ar|p|tml)\$">
-        SetHandler "proxy:unix:/run/php/${phpVersion}-fpm.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/run/php/php${phpVersion}-fpm.sock|fcgi://localhost"
     </FilesMatch>
 </VirtualHost>
 EOL
