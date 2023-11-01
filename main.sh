@@ -14,8 +14,7 @@ function is_git_installed {
   fi
 }
 
-#
-## function to check for updates
+# function to check for updates
 function check_for_updates {
   # only run if git is installed
   if is_git_installed; then
