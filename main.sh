@@ -74,6 +74,7 @@ function check_for_updates {
 declare -a TOOLS=()
 
 # Print tool options
+
 function print_menu {
   clear
   INDEX=1
