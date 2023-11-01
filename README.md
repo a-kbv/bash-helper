@@ -101,6 +101,6 @@ Your script is now available as a command you can run from any location in your 
 
 Ensure that all shell script files have correct permissions set to allow execution. Otherwise, the scripts will not run correctly when selected from the menu.
 
-## Conclusion
+## Conclusion 
 
 This project provides a simple and intuitive way of managing and executing a large collection of shell scripts. By categorically structuring and automatically populating shell script menus, it eases the interface for users, making it more manageable and user-friendly.
