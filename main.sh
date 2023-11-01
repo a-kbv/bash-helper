@@ -3,6 +3,16 @@
 # navigate to your repo directory
 cd "$(dirname "$BASH_SOURCE")"
 
+# ANSI/VT100 Terminal Control Escape Sequences
+# Set color codes
+BOLD="$(tput bold)"
+RED="$(tput setaf 1)"
+GREEN="$(tput setaf 2)"
+YELLOW="$(tput setaf 3)"
+BLUE="$(tput setaf 4)"
+WHITE="$(tput setaf 7)"
+RESET="$(tput sgr0)" # reset everything
+
 # function to check if git is installed
 function is_git_installed {
   git --version >/dev/null 2>&1
@@ -31,10 +41,10 @@ function check_for_updates {
           BASE=$(git merge-base @ "$UPSTREAM" 2>/dev/null)
 
           if [ $LOCAL = $REMOTE ]; then
-            echo "Up-to-date"
+            echo "Up to date"
           elif [ $LOCAL = $BASE ]; then
             echo "Updates available"
-            read -p "Do you want to update? (y/n)" ans
+            read -p "${YELLOW}Do you want to update the scripts menu? (y/n) ${RESET}" ans
             if [ "$ans" = "y" ]; then
               # update the repo
               git pull
@@ -63,28 +73,25 @@ function check_for_updates {
 
 declare -a TOOLS=()
 
-# ANSI/VT100 Terminal Control Escape Sequences
-# Set color codes
-BOLD="$(tput bold)"
-RED="$(tput setaf 1)"
-GREEN="$(tput setaf 2)"
-YELLOW="$(tput setaf 3)"
-BLUE="$(tput setaf 4)"
-WHITE="$(tput setaf 7)"
-RESET="$(tput sgr0)" # reset everything
-
 # Print tool options
 function print_menu {
   clear
   INDEX=1
   UPDATES_CHECK=$(check_for_updates)
 
-  echo "${YELLOW}"
-  echo "╔═════════════════════════════════╗"
-  echo "║          Available Tools        ║" 
-  echo "╚═════════════════════════════════╝"
-  echo "$UPDATES_CHECK"
-  echo "${RESET}"
+echo "${YELLOW}"
+echo "╔═══════════════════════════════════╗"
+echo "║     ${BOLD}Welcome to the Tools Menu${RESET}${YELLOW}     ║"
+if [ "$UPDATES_CHECK" = "Updates available" ]
+then
+  echo "║       ⚠️ $UPDATES_CHECK         ║"
+
+elif [ "$UPDATES_CHECK" = "Up to date" ]
+then
+  echo "║           ✅ $UPDATES_CHECK           ║"
+fi
+echo "╚═══════════════════════════════════╝"
+echo "${RESET}"
 
   for dir in */; do
     dir=${dir%*/}
