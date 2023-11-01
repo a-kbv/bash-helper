@@ -20,28 +20,38 @@ function check_for_updates {
   if is_git_installed; then
     # checks if you are connected to the internet
     if nc -zw1 google.com 443; then 
-      # check for changes on the remote
-      UPSTREAM=${1:-'@{u}'}
-      LOCAL=$(git rev-parse @ 2>/dev/null)
-      REMOTE=$(git rev-parse "$UPSTREAM" 2>/dev/null)
-      BASE=$(git merge-base @ "$UPSTREAM" 2>/dev/null)
+      # check if the current directory is a git repository
+      if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        # check if the current directory has a remote repository
+        if git config --get remote.origin.url > /dev/null 2>&1; then
+          # check for changes on the remote
+          UPSTREAM=${1:-'@{u}'}
+          LOCAL=$(git rev-parse @ 2>/dev/null)
+          REMOTE=$(git rev-parse "$UPSTREAM" 2>/dev/null)
+          BASE=$(git merge-base @ "$UPSTREAM" 2>/dev/null)
 
-      if [ $LOCAL = $REMOTE ]; then
-          echo "Up-to-date"
-      elif [ $LOCAL = $BASE ]; then
-          echo "Updates available"
-          read -p "Do you want to update? (y/n)" ans
-          if [ "$ans" = "y" ]; then
+          if [ $LOCAL = $REMOTE ]; then
+            echo "Up-to-date"
+          elif [ $LOCAL = $BASE ]; then
+            echo "Updates available"
+            read -p "Do you want to update? (y/n)" ans
+            if [ "$ans" = "y" ]; then
               # update the repo
               git pull
               # Exit after updating to avoid running outdated files
               echo "Please rerun the tool after updating."
               exit
+            fi
+          elif [ $REMOTE = $BASE ]; then
+            echo "Need to push"
+          else
+            echo "Diverged"
           fi
-      elif [ $REMOTE = $BASE ]; then
-          echo "Need to push"
+        else
+          echo "No remote git repository found. Skipping update check."
+        fi
       else
-          echo "Diverged"
+        echo "This directory is not a git repository. Skipping update check."
       fi
     else
       echo "You are currently offline. Skipping update check."
@@ -51,7 +61,6 @@ function check_for_updates {
   fi
 }
 
-check_for_updates  # call the function
 declare -a TOOLS=()
 
 # ANSI/VT100 Terminal Control Escape Sequences
@@ -68,10 +77,13 @@ RESET="$(tput sgr0)" # reset everything
 function print_menu {
   clear
   INDEX=1
+  UPDATES_CHECK=$(check_for_updates)
+
   echo "${YELLOW}"
   echo "╔═════════════════════════════════╗"
-  echo "║          Available Tools        ║"
+  echo "║          Available Tools        ║" 
   echo "╚═════════════════════════════════╝"
+  echo "$UPDATES_CHECK"
   echo "${RESET}"
 
   for dir in */; do
