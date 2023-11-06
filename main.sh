@@ -35,6 +35,8 @@ function check_for_updates {
       if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         # check if the current directory has a remote repository
         if git config --get remote.origin.url > /dev/null 2>&1; then
+          # fetch the latest updates from the remote repository
+          git fetch
           # check for changes on the remote
           UPSTREAM=${1:-'@{u}'}
           LOCAL=$(git rev-parse @ 2>/dev/null)
