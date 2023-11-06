@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # navigate to your repo directory
-cd "$(dirname "$BASH_SOURCE")"
+SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd -P)"
+cd "$SCRIPT_DIR"
 
 # ANSI/VT100 Terminal Control Escape Sequences
 # Set color codes
