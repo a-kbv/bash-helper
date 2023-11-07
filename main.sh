@@ -14,20 +14,32 @@ BLUE="$(tput setaf 4)"
 WHITE="$(tput setaf 7)"
 RESET="$(tput sgr0)" # reset everything
 
-# function to check if git is installed
-function is_git_installed {
-  git --version >/dev/null 2>&1
+spin() {
+  local -a spinner
+  spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local end=$((SECONDS+1))
 
-  if [ $? -eq 0 ]; then
-    return 0
-  else
-    return 1
-  fi
+  while [ $SECONDS -lt $end ]; do
+    for i in "${spinner[@]}"; do
+      echo -ne "\r$i"
+      sleep 0.1
+      if [ $SECONDS -ge $end ]; then
+        echo -ne "\r "
+        return
+      fi
+    done
+  done
 }
+
+spin
 
 # function to check for updates
 function check_for_updates {
   # only run if git is installed
+   function is_git_installed {
+    git --version >/dev/null 2>&1
+    return $?
+  }
   if is_git_installed; then
     # checks if you are connected to the internet
     if nc -zw1 google.com 443; then 
@@ -36,7 +48,9 @@ function check_for_updates {
         # check if the current directory has a remote repository
         if git config --get remote.origin.url > /dev/null 2>&1; then
           # fetch the latest updates from the remote repository
-          git fetch
+          
+          git fetch > /dev/null 2>&1
+
           # check for changes on the remote
           UPSTREAM=${1:-'@{u}'}
           LOCAL=$(git rev-parse @ 2>/dev/null)
@@ -77,7 +91,6 @@ function check_for_updates {
 declare -a TOOLS=()
 
 # Print tool options
-
 function print_menu {
   clear
   INDEX=1
