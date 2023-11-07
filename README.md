@@ -1,6 +1,6 @@
 # Shell Script Menu Project
 
-![helper](/helper.png) 
+![helper](/helper.png)  
 
 The Shell Script Menu Project is a command-line interface (CLI) structured in a series of directories and subdirectories, each of which contains a suite of shell script tools designed to perform a variety of different tasks. 
 
